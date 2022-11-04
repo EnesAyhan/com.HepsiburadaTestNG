@@ -11,18 +11,26 @@ import java.time.Duration;
 
 public class Driver {
     private Driver() {
-        //Driver'dan obje oluşturulmasını engellemek isteriz.
     }
 
     static WebDriver driver;
 
     public static WebDriver getDriver() {
         if (driver == null) {
-            //driver daha once acıldı ise, tekrar yapma
+
             switch (ConfigReader.getProperty("browser")) {
                 case "chrome":
+                    ChromeOptions options=new ChromeOptions();
+                    options.addArguments("--incognito");
+                    options.addArguments("--start-maximized");
+                    options.addArguments("--ignore-certificate-errors");
+                    options.addArguments("--allow-insecure-localhost");
+                    options.addArguments("--acceptInsecureCerts");
+                    options.addArguments("--disable-blink-features=AutomationControlled");
+                    options.addArguments("--disable-extensions");
+
                     WebDriverManager.chromedriver().setup();
-                    driver = new ChromeDriver();
+                    driver = new ChromeDriver(options);
                     break;
                 case "edge":
                     WebDriverManager.edgedriver().setup();
@@ -44,7 +52,7 @@ public class Driver {
     }
 
     public static void closeDriver() {
-        if (driver != null) { //driver bir deger atanmissa kapat!
+        if (driver != null) {
             driver.close();
             driver = null;
         }
